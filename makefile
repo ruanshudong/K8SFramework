@@ -14,8 +14,8 @@ $(foreach param,$(PARAMS),$(eval $(call func_read_params,$(param))))
 $(foreach param,$(PARAMS),$(info read [ $(param) ]  =  $($(param))))
 
 define create_buildx
-	docker run --rm --privileged tonistiigi/binfmt:latest --install all
-	export DOCKER_CLI_EXPERIMENTAL=enabled
+    docker run --rm --privileged tonistiigi/binfmt:latest --install all
+    export DOCKER_CLI_EXPERIMENTAL=enabled
     docker buildx create --name k8s-framework-builder --use
     docker buildx inspect --bootstrap --builder k8s-framework-builder
 endef
@@ -33,7 +33,7 @@ define func_create_compiler
 	cp -rf $(PWD)/$(TARS_CPP_DIR) $(TARS_COMPILER_CONTEXT_DIR)/root/root
 	@$(call create_buildx)
 	$(call func_check_params, REGISTRY_URL BUILD_VERSION)
-	$(if $(REGISTRY_USER), @($(ENV_DOCKER) login -u $(REGISTRY_USER) -p $(REGISTRY_PASSWORD) $(REGISTRY_URL:docker.io/%=docker.io)))
+	@$(if $(REGISTRY_USER), @($(ENV_DOCKER) login -u $(REGISTRY_USER) -p $(REGISTRY_PASSWORD) $(REGISTRY_URL:docker.io/%=docker.io)))
 	$(ENV_DOCKER) buildx build -t tarscompiler:$(BUILD_VERSION) --build-arg BUILD_VERSION=$(BUILD_VERSION) $(TARS_COMPILER_CONTEXT_DIR) --platform=linux/amd64,linux/arm64 --push
 endef
 
@@ -45,7 +45,7 @@ endef
 define func_build_image
 	$(call func_check_params, REGISTRY_URL BUILD_VERSION)
 	$(call create_buildx)
-	$(if $(REGISTRY_USER), @($(ENV_DOCKER) login -u $(REGISTRY_USER) -p $(REGISTRY_PASSWORD) $(REGISTRY_URL:docker.io/%=docker.io)))
+	@$(if $(REGISTRY_USER), @($(ENV_DOCKER) login -u $(REGISTRY_USER) -p $(REGISTRY_PASSWORD) $(REGISTRY_URL:docker.io/%=docker.io)))
 	$(if $(findstring $1,tars.tarsweb),\
 		$(call func_check_params, TARS_WEB_DIR) \
 		git submodule update --init --recursive && rm -rf $3/root/root/tars-web && cp -rf $(PWD)/$(TARS_WEB_DIR) $3/root/root/tars-web \
