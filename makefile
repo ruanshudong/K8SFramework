@@ -31,7 +31,7 @@ define func_create_compiler
 	git submodule update --init --recursive
 	rm -rf $(TARS_COMPILER_CONTEXT_DIR)/root/root/$(TARS_CPP_DIR)
 	cp -rf $(PWD)/$(TARS_CPP_DIR) $(TARS_COMPILER_CONTEXT_DIR)/root/root
-	$(call create_buildx)
+	@$(call create_buildx)
 	$(ENV_DOCKER) buildx build -t tarscompiler:$(BUILD_VERSION) --build-arg BUILD_VERSION=$(BUILD_VERSION) $(TARS_COMPILER_CONTEXT_DIR) --platform=linux/amd64,linux/arm64 --push
 endef
 
